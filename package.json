@@ -1,0 +1,32 @@
+{
+  "name": "dsh-wakeup",
+  "version": "0.2.2",
+  "private": true,
+  "description": "Injects your home folder — identity, house rules, recent diary and ledger — into every new session before anyone speaks, and keeps that home writable so the agent can amend its own persona.",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "test": "node test/smoke.mjs",
+    "test:install": "node test/install-test.mjs",
+    "install-plugin": "node install.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT",
+  "author": "hzh5021",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hzh5021/dsh-wakeup.git"
+  },
+  "homepage": "https://github.com/hzh5021/dsh-wakeup#readme"
+}
