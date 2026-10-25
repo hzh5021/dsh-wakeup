@@ -1,6 +1,6 @@
 {
   "name": "dsh-wakeup",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "private": true,
   "description": "Injects your home folder — identity, house rules, recent diary and ledger — into every new session before anyone speaks, and keeps that home writable so the agent can amend its own persona.",
   "type": "module",
