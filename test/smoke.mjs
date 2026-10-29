@@ -171,26 +171,42 @@ assert.equal(
 );
 ok("开关：leadFile / coreFiles / diaryDays / memoSections 都能关");
 
-// ------------------------------------------------------------- 4. 截断
+// --------------------------------------------------------- 4. 精炼（2.0）
 // 注意：fileMaxChars 下限 500、maxChars 下限 1000；比这更小的值会被夹回安全区。
 const cut = await _internals.buildWake(
   _internals.resolveOptions({ home, fileMaxChars: 500 }),
   NOW,
 );
-assert.ok(cut.includes("已被 dsh-wakeup 截断"), "超过单文件上限该留下截断提示");
+assert.ok(cut.includes("被精炼过"), "超过单文件上限该留下精炼提示");
 assert.ok(cut.includes("这里留了 500 字"), "单文件上限该是 500");
 assert.ok(cut.length < block.length, "预算收紧后整包该更短");
 
-// 整包上限：家目录只有一本 3000 字的大账，预算 1000 -> 连它自己都得截
+// 2.0 的规矩：预算见底不丢书，在本内削到地板，包尾报一声。
 const bigHome = join(root, "大账家");
 await mkdir(bigHome, { recursive: true });
 await writeFile(join(bigHome, "成长记录.md"), `# 成长记录\n\n${"长".repeat(3000)}`, "utf8");
+await writeFile(join(bigHome, "灵魂设定.md"), "# 灵魂设定\n\n这一本永不削。\n", "utf8");
 const bigBlock = await _internals.buildWake(
   _internals.resolveOptions({ home: bigHome, maxChars: 1000 }),
   NOW,
 );
-assert.ok(bigBlock.includes("这里留了 1000 字"), "整包上限该把单文件压到 1000 字");
-assert.ok(bigBlock.length < 2500, `整包该被 maxChars 拦住，实得 ${bigBlock.length}`);
+assert.ok(bigBlock.includes("【这轮精炼过的】"), "削过就该在包尾报一声");
+assert.ok(bigBlock.includes("这一本永不削"), "身份那本不该被削");
+assert.ok(bigBlock.length < 3000, `整包该被 maxChars 拦住，实得 ${bigBlock.length}`);
+
+// 按标题里的日期取最近几节：新节插在最前面也认得出来
+const dated = _internals.recentMemoSections(
+  "# 账\n\n## 2026-01-05 · 最新的\n\n五。\n\n## 2026-01-01 · 最旧的\n\n一。\n\n## 2026-01-03 · 中间\n\n三。\n",
+  2,
+);
+assert.deepEqual(
+  dated.map(entry => entry.split("\n")[0]),
+  ["## 2026-01-05 · 最新的", "## 2026-01-03 · 中间"],
+  "该按日期取最近两节，不按文件里的位置",
+);
+assert.ok(_internals.sectionDate("2026-01-05 · 最新的") > _internals.sectionDate("2026-01-03"));
+assert.equal(_internals.sectionDate("没有日期"), null);
+ok("精炼：单本上限、整包上限、削到地板留身份、包尾报账、按日期取节");
 
 // 夹取区间：荒唐的小值 / 大值都退回安全区
 const clamped = _internals.resolveOptions({

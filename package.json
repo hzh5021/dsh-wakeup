@@ -1,8 +1,8 @@
 {
   "name": "dsh-wakeup",
-  "version": "0.2.3",
+  "version": "2.0.0",
   "private": true,
-  "description": "Injects your home folder — identity, house rules, recent diary and ledger — into every new session before anyone speaks, and keeps that home writable so the agent can amend its own persona.",
+  "description": "Injects your home folder — identity, house rules, recent diary and ledger — into every new session before anyone speaks, and keeps that home writable so the agent can amend its own persona. 2.0: every book gets in — when the budget runs out it trims each book down to a floor and reports what was trimmed, instead of dropping whole files; recent ledger sections are picked by date, not position.",
   "type": "module",
   "main": "lib/index.js",
   "exports": {
